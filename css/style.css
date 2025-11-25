@@ -1,21 +1,19 @@
-/* ==================== CSS变量定义 ==================== */
+/* ==================== CSS变量定义 - 黑白红简约风格 ==================== */
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary-color: #64748b;
-    --accent-color: #f59e0b;
-    --success-color: #10b981;
-    --bg-color: #ffffff;
-    --bg-secondary: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
+    --primary-color: #DC143C;          /* 红色主色 */
+    --primary-dark: #B21030;           /* 深红色 */
+    --primary-light: #FF6B7A;          /* 浅红色 */
+    --bg-color: #FFFFFF;               /* 纯白背景 */
+    --bg-secondary: #F8F8F8;           /* 浅灰背景 */
+    --text-primary: #1a1a1a;           /* 深黑色文字 */
+    --text-secondary: #666666;         /* 灰色文字 */
+    --border-color: #E0E0E0;           /* 边框颜色 */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
     --transition: all 0.3s ease;
 }
 
@@ -27,10 +25,27 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    line-height: 1.6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    line-height: 1.8;
     color: var(--text-primary);
     background-color: var(--bg-secondary);
+    font-size: 16px;
+    position: relative;
+}
+
+/* ==================== 水印效果 ==================== */
+body::before {
+    content: '公众号:黄赋';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 80px;
+    color: rgba(220, 20, 60, 0.03);
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+    font-weight: 700;
 }
 
 /* ==================== 导航栏 ==================== */
@@ -53,10 +68,11 @@ body {
 }
 
 .nav-brand {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     text-decoration: none;
+    letter-spacing: -0.5px;
 }
 
 .nav-links {
@@ -69,6 +85,7 @@ body {
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 500;
+    font-size: 0.95rem;
     transition: var(--transition);
 }
 
@@ -94,24 +111,26 @@ body {
 
 .hero-section {
     text-align: center;
-    padding: 4rem 1.5rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 3rem 1.5rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
     color: white;
 }
 
 .hero-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1rem;
+    letter-spacing: -1px;
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     opacity: 0.9;
     margin-bottom: 2rem;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.6;
 }
 
 .search-box {
@@ -122,17 +141,18 @@ body {
 
 .search-input {
     width: 100%;
-    padding: 1rem 3rem 1rem 1rem;
+    padding: 0.875rem 3rem 0.875rem 1rem;
     font-size: 1rem;
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
     outline: none;
     transition: var(--transition);
+    background: var(--bg-color);
 }
 
 .search-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
 }
 
 .search-icon {
@@ -146,14 +166,14 @@ body {
 /* ==================== 目录网格 ==================== */
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
     margin-top: 2rem;
 }
 
 .card {
     background: var(--bg-color);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     box-shadow: var(--shadow-md);
     transition: var(--transition);
@@ -174,21 +194,22 @@ body {
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.75rem;
 }
 
 .card-title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
+    line-height: 1.4;
 }
 
 .card-excerpt {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .card-progress {
@@ -208,7 +229,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: var(--success-color);
+    background: var(--primary-color);
     transition: var(--transition);
 }
 
@@ -229,17 +250,18 @@ body {
 
 .sidebar {
     position: sticky;
-    top: 80px;
+    top: 90px;
     height: fit-content;
     background: var(--bg-color);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 }
 
 .sidebar-title {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 1rem;
     color: var(--text-primary);
 }
@@ -275,14 +297,15 @@ body {
 
 .toc-link.completed::before {
     content: '✓ ';
-    color: var(--success-color);
+    color: var(--primary-color);
 }
 
 .article-content {
     background: var(--bg-color);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: 3rem;
     box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 }
 
 .article-header {
@@ -293,44 +316,46 @@ body {
 
 .article-number {
     color: var(--primary-color);
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
 .article-title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 1rem;
+    line-height: 1.3;
 }
 
 .article-body h2 {
     font-size: 1.75rem;
     font-weight: 700;
-    margin: 2rem 0 1rem;
+    margin: 2.5rem 0 1rem;
     color: var(--text-primary);
 }
 
 .article-body h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    margin: 1.5rem 0 0.75rem;
+    margin: 2rem 0 0.75rem;
     color: var(--text-primary);
 }
 
 .article-body p {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     line-height: 1.8;
+    font-size: 1.05rem;
 }
 
 .article-body ul, .article-body ol {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     padding-left: 2rem;
 }
 
 .article-body li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     line-height: 1.8;
 }
 
@@ -348,16 +373,16 @@ body {
 }
 
 .warning-box {
-    background: #fef3c7;
-    border-left: 4px solid var(--accent-color);
+    background: #FFF5F5;
+    border-left: 4px solid var(--primary-color);
     padding: 1.5rem;
     margin: 1.5rem 0;
     border-radius: var(--radius-md);
 }
 
 .tip-box {
-    background: #d1fae5;
-    border-left: 4px solid var(--success-color);
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--text-primary);
     padding: 1.5rem;
     margin: 1.5rem 0;
     border-radius: var(--radius-md);
@@ -382,25 +407,31 @@ body {
     font-weight: 600;
     text-align: center;
     transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
 .nav-btn:hover {
     background: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
 .nav-btn.secondary {
-    background: var(--bg-secondary);
+    background: var(--bg-color);
     color: var(--text-primary);
+    border: 2px solid var(--border-color);
 }
 
 .nav-btn.secondary:hover {
-    background: var(--border-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 /* ==================== 按钮 ==================== */
 .btn {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.875rem 1.75rem;
     background: var(--primary-color);
     color: white;
     text-decoration: none;
@@ -433,7 +464,7 @@ body {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
     padding: 1.5rem;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
 }
 
@@ -448,8 +479,12 @@ body {
     font-weight: 700;
 }
 
-/* ==================== 响应式设计 ==================== */
+/* ==================== 响应式设计 - 优化移动端 ==================== */
 @media (max-width: 768px) {
+    body {
+        font-size: 17px; /* 移动端稍大字体 */
+    }
+
     .nav-links {
         display: none;
         flex-direction: column;
@@ -471,20 +506,44 @@ body {
         display: block;
     }
 
+    .nav-brand {
+        font-size: 1.1rem;
+    }
+
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.875rem; /* 移动端标题 */
+        line-height: 1.2;
     }
 
     .hero-subtitle {
         font-size: 1rem;
     }
 
+    .hero-section {
+        padding: 2rem 1rem;
+    }
+
+    .container {
+        padding: 1.5rem 1rem;
+    }
+
     .content-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .card {
+        padding: 1.25rem;
+    }
+
+    .card-title {
+        font-size: 1.0625rem; /* 17px */
     }
 
     .article-layout {
         grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 1rem;
     }
 
     .sidebar {
@@ -493,29 +552,68 @@ body {
     }
 
     .article-content {
-        padding: 1.5rem;
+        padding: 1.5rem 1.25rem;
     }
 
     .article-title {
-        font-size: 1.75rem;
+        font-size: 1.625rem; /* 26px */
+        line-height: 1.3;
+    }
+
+    .article-body h2 {
+        font-size: 1.375rem; /* 22px */
+        margin: 2rem 0 0.875rem;
+    }
+
+    .article-body h3 {
+        font-size: 1.125rem; /* 18px */
+        margin: 1.5rem 0 0.75rem;
+    }
+
+    .article-body p {
+        font-size: 1.0625rem; /* 17px */
+        line-height: 1.8;
+        margin-bottom: 1.125rem;
+    }
+
+    .article-body li {
+        font-size: 1.0625rem; /* 17px */
+        line-height: 1.75;
     }
 
     .article-navigation {
         flex-direction: column;
     }
+
+    .nav-btn {
+        padding: 0.875rem 1.25rem;
+    }
+
+    /* 水印移动端调整 */
+    body::before {
+        font-size: 50px;
+    }
 }
 
 @media (max-width: 480px) {
     .container {
-        padding: 1rem;
+        padding: 1rem 0.875rem;
     }
 
     .hero-section {
-        padding: 2rem 1rem;
+        padding: 1.5rem 0.875rem;
     }
 
     .article-content {
-        padding: 1rem;
+        padding: 1.25rem 1rem;
+    }
+
+    .article-title {
+        font-size: 1.5rem;
+    }
+
+    body::before {
+        font-size: 40px;
     }
 }
 
@@ -537,6 +635,10 @@ body {
 
 /* ==================== 打印样式 ==================== */
 @media print {
+    body::before {
+        display: none;
+    }
+
     .navbar,
     .sidebar,
     .article-navigation,
@@ -547,5 +649,179 @@ body {
     .article-content {
         box-shadow: none;
         padding: 0;
+    }
+}
+
+/* ==================== 作者介绍页面样式 ==================== */
+.author-section {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: var(--bg-color);
+    padding: 3rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.author-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 0.75rem;
+}
+
+.author-section p {
+    margin-bottom: 1.25rem;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.author-section ul {
+    margin-bottom: 1.25rem;
+    padding-left: 2rem;
+}
+
+.author-section li {
+    margin-bottom: 0.75rem;
+    line-height: 1.8;
+}
+
+.contact-info {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    margin-top: 2rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* ==================== 测试模块样式 ==================== */
+.quiz-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: var(--bg-color);
+    padding: 2.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.quiz-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.quiz-progress {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.question-card {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.question-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.options-list {
+    list-style: none;
+}
+
+.option-item {
+    margin-bottom: 1rem;
+}
+
+.option-label {
+    display: block;
+    padding: 1rem 1.25rem;
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.05rem;
+}
+
+.option-label:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-secondary);
+}
+
+.option-input {
+    margin-right: 0.75rem;
+}
+
+.quiz-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.result-card {
+    background: var(--bg-secondary);
+    padding: 2.5rem;
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.result-score {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 1rem 0;
+}
+
+.result-message {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.result-details {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 1.5rem 0;
+}
+
+@media (max-width: 768px) {
+    .author-section,
+    .quiz-container {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .quiz-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .question-title {
+        font-size: 1.125rem;
+    }
+
+    .option-label {
+        padding: 0.875rem 1rem;
+        font-size: 1.0625rem;
+    }
+
+    .result-score {
+        font-size: 2.5rem;
     }
 }

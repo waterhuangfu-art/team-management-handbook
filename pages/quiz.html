@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="管理知识测试 - 检验你对创始人带团队21讲的掌握程度">
+    <title>管理知识测试 - 创始人带团队21讲</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">创始人带团队21讲</a>
+            <button class="nav-toggle">☰</button>
+            <ul class="nav-links">
+                <li><a href="../index.html">返回首页</a></li>
+                <li><a href="author.html">作者介绍</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 测试内容 -->
+    <div class="container">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h1>📝 管理知识测试</h1>
+                <p style="color: var(--text-secondary); font-size: 1rem;">
+                    测试共10道选择题,随机从题库中抽取<br>
+                    完成后将给出评分和详细解析
+                </p>
+            </div>
+
+            <!-- 题目内容区域 -->
+            <div id="quizContent">
+                <!-- 题目将通过JavaScript动态生成 -->
+                <div style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+                    <p style="color: var(--text-secondary);">正在加载题目...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div style="max-width: 800px; margin: 2rem auto; background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary-color);">
+            <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary);">
+                📌 使用说明
+            </h3>
+            <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem;">
+                <li>题目从20道题库中随机抽取10道</li>
+                <li>每题只有一个正确答案</li>
+                <li>可以使用"上一题"按钮修改答案</li>
+                <li>提交后可以查看详细解析</li>
+                <li>建议学完21讲后再来测试效果更好</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--text-primary); color: white; text-align: center; padding: 2rem 1rem; margin-top: 4rem;">
+        <p style="margin-bottom: 0.5rem;">创始人带团队21讲 - 小团队管理实战手册</p>
+        <p style="opacity: 0.7; font-size: 0.9rem;">作者:黄赋 · 公众号:黄赋</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/quiz.js"></script>
+</body>
+</html>
