@@ -387,6 +387,32 @@ function showResult() {
                 </p>
             </div>
 
+            <!-- 二维码引导 -->
+            <div style="background: linear-gradient(135deg, #fff 0%, var(--bg-secondary) 100%); padding: 2rem; border-radius: var(--radius-md); margin: 2rem 0; border: 2px solid var(--primary-color);">
+                <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--primary-color); text-align: center; font-weight: 700;">
+                    🎁 关注公众号,领取21天卡片版
+                </h3>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    关注【公众号:黄赋】回复"<strong style="color: var(--primary-color);">21天</strong>",获得每日打卡学习卡片
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; justify-items: center;">
+                    <div style="text-align: center;">
+                        <div style="background: white; padding: 0.75rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                            <img src="../images/公众号二维码.jpg" alt="公众号二维码" style="width: 150px; height: 150px; display: block; border-radius: var(--radius-sm);">
+                        </div>
+                        <p style="margin-top: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">公众号二维码</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="background: white; padding: 0.75rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                            <img src="../images/黄赋的二维码.png" alt="黄赋微信" style="width: 150px; height: 150px; display: block; border-radius: var(--radius-sm);">
+                        </div>
+                        <p style="margin-top: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">个人微信</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="quiz-actions">
                 <button class="btn" onclick="showDetailedResults()">查看详解</button>
                 <button class="btn btn-secondary" onclick="location.reload()">重新测试</button>
