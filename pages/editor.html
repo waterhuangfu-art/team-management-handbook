@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容编辑器 - 创始人带团队21讲</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .editor-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .editor-toolbar {
+            background: var(--bg-color);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            border: 1px solid var(--border-color);
+        }
+
+        .editor-btn {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .editor-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .editor-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .editor-select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+        }
+
+        .editor-content {
+            background: var(--bg-color);
+            padding: 3rem;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-color);
+            min-height: 500px;
+            outline: none;
+        }
+
+        .editor-content:focus {
+            border-color: var(--primary-color);
+        }
+
+        .save-panel {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .instruction {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+        }
+
+        .instruction h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .instruction p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">创始人带团队21讲</a>
+            <button class="nav-toggle">☰</button>
+            <ul class="nav-links">
+                <li><a href="../index.html">返回首页</a></li>
+                <li><a href="author.html">作者介绍</a></li>
+                <li><a href="quiz.html">测试模块</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="editor-container">
+        <div class="instruction">
+            <h2>📝 可视化内容编辑器</h2>
+            <p>选择要编辑的页面，直接在下方编辑区修改内容，编辑完成后复制HTML代码保存到对应文件。</p>
+        </div>
+
+        <!-- 页面选择 -->
+        <div style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-color);">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">
+                选择要编辑的页面:
+            </label>
+            <select id="pageSelector" class="editor-select" style="width: 100%; padding: 0.75rem;">
+                <option value="">-- 请选择 --</option>
+                <option value="index">首页</option>
+                <option value="author">作者介绍</option>
+                <option value="day-01">Day 1: 你自己干最多,团队却没成长</option>
+                <option value="day-02">Day 2: 业绩好的人,为什么不能提拔</option>
+                <option value="day-03">Day 3: 你是在管理,还是在传话</option>
+                <option value="day-04">Day 4: 公司出问题,先反思自己</option>
+                <option value="day-05">Day 5: 你的目标,团队听得懂吗</option>
+            </select>
+        </div>
+
+        <!-- 编辑工具栏 -->
+        <div class="editor-toolbar">
+            <button class="editor-btn" onclick="document.execCommand('bold')">
+                <strong>B</strong> 粗体
+            </button>
+            <button class="editor-btn" onclick="document.execCommand('italic')">
+                <em>I</em> 斜体
+            </button>
+            <button class="editor-btn" onclick="document.execCommand('underline')">
+                <u>U</u> 下划线
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('formatBlock', false, 'h2')">
+                标题2
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('formatBlock', false, 'h3')">
+                标题3
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('insertUnorderedList')">
+                • 列表
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('insertOrderedList')">
+                1. 列表
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('justifyLeft')">
+                ← 左对齐
+            </button>
+            <button class="editor-btn secondary" onclick="document.execCommand('justifyCenter')">
+                居中
+            </button>
+            <select class="editor-select" onchange="document.execCommand('fontSize', false, this.value)">
+                <option value="">字号</option>
+                <option value="1">最小</option>
+                <option value="3">正常</option>
+                <option value="5">大</option>
+                <option value="7">最大</option>
+            </select>
+            <input type="color" id="textColor" onchange="document.execCommand('foreColor', false, this.value)"
+                   style="height: 36px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer;">
+        </div>
+
+        <!-- 编辑区域 -->
+        <div
+            id="editorContent"
+            class="editor-content"
+            contenteditable="true"
+            spellcheck="false"
+        >
+            <h2>欢迎使用可视化编辑器</h2>
+            <p>请在上方选择要编辑的页面，内容将自动加载到这里。</p>
+            <p>您可以像在Word中一样直接编辑内容：</p>
+            <ul>
+                <li>选中文字后使用工具栏按钮设置格式</li>
+                <li>直接输入和删除文字</li>
+                <li>复制粘贴内容</li>
+            </ul>
+            <p style="color: var(--primary-color); font-weight: 600;">
+                编辑完成后，点击下方"导出HTML"按钮保存。
+            </p>
+        </div>
+
+        <!-- 保存面板 -->
+        <div class="save-panel">
+            <h3 style="margin-bottom: 1rem; color: var(--text-primary);">💾 保存修改</h3>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <button class="btn" onclick="exportHTML()">
+                    📋 复制HTML代码
+                </button>
+                <button class="btn btn-secondary" onclick="previewChanges()">
+                    👁️ 预览效果
+                </button>
+                <button class="btn btn-secondary" onclick="resetContent()">
+                    🔄 重置内容
+                </button>
+            </div>
+            <div id="exportResult" style="display: none; background: var(--bg-color); padding: 1rem; border-radius: var(--radius-sm); margin-top: 1rem;">
+                <p style="color: var(--primary-color); font-weight: 600; margin-bottom: 0.5rem;">✅ HTML代码已复制到剪贴板！</p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    接下来请：<br>
+                    1. 打开对应的HTML文件<br>
+                    2. 找到 &lt;div class="article-body"&gt; 或主要内容区域<br>
+                    3. 粘贴替换内容<br>
+                    4. 保存文件<br>
+                    5. 运行 ./update.sh 推送更新
+                </p>
+            </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius-md); margin-top: 2rem;">
+            <h3 style="font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary);">
+                📖 使用说明
+            </h3>
+            <ol style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem;">
+                <li>在上方选择要编辑的页面</li>
+                <li>在编辑区直接修改内容（像使用Word一样）</li>
+                <li>使用工具栏设置文字格式</li>
+                <li>点击"复制HTML代码"按钮</li>
+                <li>打开对应的HTML文件，粘贴替换内容部分</li>
+                <li>运行 ./update.sh 推送更新到网站</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 页面内容加载
+        const pageSelector = document.getElementById('pageSelector');
+        const editorContent = document.getElementById('editorContent');
+        const exportResult = document.getElementById('exportResult');
+
+        // 示例内容（实际使用时可以通过Ajax加载真实内容）
+        const pageContents = {
+            'index': `
+                <h2>创始人带团队21讲</h2>
+                <p>21天，21个场景，21个方法。每天10分钟，拿回去就能用。</p>
+                <p>这是首页的内容示例，您可以直接编辑...</p>
+            `,
+            'author': `
+                <h2>作者介绍</h2>
+                <p>哈喽，朋友你好！我是黄赋。</p>
+                <p>我在大湾区工作生活，是个创业教练...</p>
+            `
+        };
+
+        pageSelector.addEventListener('change', function() {
+            const selectedPage = this.value;
+            if (selectedPage && pageContents[selectedPage]) {
+                editorContent.innerHTML = pageContents[selectedPage];
+            } else if (selectedPage) {
+                editorContent.innerHTML = `
+                    <h2>编辑 ${this.options[this.selectedIndex].text}</h2>
+                    <p>请在这里输入或粘贴内容...</p>
+                    <p>您可以直接编辑这些文字。</p>
+                `;
+            }
+            exportResult.style.display = 'none';
+        });
+
+        // 导出HTML
+        function exportHTML() {
+            const html = editorContent.innerHTML;
+
+            // 复制到剪贴板
+            navigator.clipboard.writeText(html).then(() => {
+                exportResult.style.display = 'block';
+
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    exportResult.style.display = 'none';
+                }, 5000);
+            }).catch(err => {
+                alert('复制失败，请手动复制内容');
+                console.error('复制失败:', err);
+            });
+        }
+
+        // 预览效果
+        function previewChanges() {
+            const previewWindow = window.open('', 'preview', 'width=800,height=600');
+            previewWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>预览</title>
+                    <link rel="stylesheet" href="../css/style.css">
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="article-content">
+                            ${editorContent.innerHTML}
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+
+        // 重置内容
+        function resetContent() {
+            if (confirm('确定要重置内容吗？未保存的修改将丢失。')) {
+                pageSelector.dispatchEvent(new Event('change'));
+            }
+        }
+    </script>
+</body>
+</html>
