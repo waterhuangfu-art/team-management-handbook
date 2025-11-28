@@ -262,7 +262,7 @@ class ShareManager {
                     <img src="../images/Day${String(chapterId).padStart(2, '0')}${chapterTitle.split(/[,，]/)[0]}.png"
                          alt="分享卡片"
                          style="width: 100%; max-width: 400px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);"
-                         onerror="this.src='../images/海报.png'">
+                         onerror="this.src='../images/海报（新）.jpg'">
                 </div>
 
                 <p style="margin: 1.5rem 0; color: var(--text-secondary); font-size: 0.95rem;">
