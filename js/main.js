@@ -171,6 +171,10 @@ class HighlightManager {
         return this.highlights[chapterId] || [];
     }
 
+    getAllHighlights() {
+        return this.highlights;
+    }
+
     getTotalHighlightsCount() {
         return Object.values(this.highlights).reduce((sum, highlights) => sum + highlights.length, 0);
     }
@@ -178,77 +182,8 @@ class HighlightManager {
 
 const highlightManager = new HighlightManager();
 
-// ==================== 阅读设置管理 ====================
-class ReadingSettings {
-    constructor() {
-        this.settings = this.loadSettings();
-        this.applySettings();
-    }
-
-    loadSettings() {
-        const data = localStorage.getItem(SETTINGS_KEY);
-        return data ? JSON.parse(data) : {
-            theme: 'light', // light, dark
-            fontSize: 'medium', // small, medium, large
-            fontFamily: 'system' // system, serif, sans-serif
-        };
-    }
-
-    saveSettings() {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings));
-    }
-
-    setTheme(theme) {
-        this.settings.theme = theme;
-        this.saveSettings();
-        this.applySettings();
-    }
-
-    setFontSize(size) {
-        this.settings.fontSize = size;
-        this.saveSettings();
-        this.applySettings();
-    }
-
-    setFontFamily(family) {
-        this.settings.fontFamily = family;
-        this.saveSettings();
-        this.applySettings();
-    }
-
-    applySettings() {
-        const root = document.documentElement;
-
-        // 主题
-        if (this.settings.theme === 'dark') {
-            root.setAttribute('data-theme', 'dark');
-        } else {
-            root.removeAttribute('data-theme');
-        }
-
-        // 字号
-        const fontSizes = {
-            small: '15px',
-            medium: '17px',
-            large: '19px'
-        };
-        root.style.setProperty('--base-font-size', fontSizes[this.settings.fontSize] || '17px');
-
-        // 字体
-        const fontFamilies = {
-            system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            serif: 'Georgia, "Times New Roman", serif',
-            sans: '"Helvetica Neue", Helvetica, Arial, sans-serif'
-        };
-        root.style.setProperty('--reading-font', fontFamilies[this.settings.fontFamily] || fontFamilies.system);
-    }
-
-    getSettings() {
-        return this.settings;
-    }
-}
-
-const readingSettings = new ReadingSettings();
+// ==================== 阅读设置管理 (已禁用) ====================
+// 阅读设置功能已移除
 
 // ==================== 学习统计 ====================
 class StudyStats {
@@ -638,81 +573,8 @@ function initSidebarTOC() {
     }
 }
 
-// ==================== 阅读设置控件 ====================
-function initReadingControls() {
-    const controls = document.createElement('div');
-    controls.className = 'reading-controls';
-    controls.innerHTML = `
-        <button class="control-toggle" aria-label="阅读设置" onclick="this.nextElementSibling.classList.toggle('active')">
-            ⚙️
-        </button>
-        <div class="controls-panel">
-            <h4 style="margin-bottom: 1rem; font-size: 0.95rem;">阅读设置</h4>
-
-            <div class="control-group">
-                <label>主题</label>
-                <div class="control-buttons">
-                    <button class="control-btn ${readingSettings.getSettings().theme === 'light' ? 'active' : ''}"
-                            onclick="readingSettings.setTheme('light'); updateControlButtons()">
-                        ☀️ 白天
-                    </button>
-                    <button class="control-btn ${readingSettings.getSettings().theme === 'dark' ? 'active' : ''}"
-                            onclick="readingSettings.setTheme('dark'); updateControlButtons()">
-                        🌙 夜间
-                    </button>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>字号</label>
-                <div class="control-buttons">
-                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'small' ? 'active' : ''}"
-                            onclick="readingSettings.setFontSize('small'); updateControlButtons()">
-                        小
-                    </button>
-                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'medium' ? 'active' : ''}"
-                            onclick="readingSettings.setFontSize('medium'); updateControlButtons()">
-                        中
-                    </button>
-                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'large' ? 'active' : ''}"
-                            onclick="readingSettings.setFontSize('large'); updateControlButtons()">
-                        大
-                    </button>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>字体</label>
-                <div class="control-buttons">
-                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'system' ? 'active' : ''}"
-                            onclick="readingSettings.setFontFamily('system'); updateControlButtons()">
-                        默认
-                    </button>
-                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'serif' ? 'active' : ''}"
-                            onclick="readingSettings.setFontFamily('serif'); updateControlButtons()">
-                        衬线
-                    </button>
-                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'sans' ? 'active' : ''}"
-                            onclick="readingSettings.setFontFamily('sans'); updateControlButtons()">
-                        无衬线
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(controls);
-}
-
-function updateControlButtons() {
-    const settings = readingSettings.getSettings();
-    document.querySelectorAll('.controls-panel .control-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // 重新应用active类
-    initReadingControls();
-}
+// ==================== 阅读设置控件 (已禁用) ====================
+// 阅读设置控件已移除
 
 // ==================== 学习统计可视化 ====================
 function renderStudyStats() {
@@ -893,7 +755,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initScrollProgress();
         initSidebarTOC();
         initTextSelection();
-        initReadingControls();
 
         // 检查成就
         setTimeout(() => checkAchievements(), 1000);
@@ -912,9 +773,7 @@ window.navigateToChapter = navigateToChapter;
 window.progressManager = progressManager;
 window.noteManager = noteManager;
 window.highlightManager = highlightManager;
-window.readingSettings = readingSettings;
 window.studyStats = studyStats;
 window.shareManager = shareManager;
-window.updateControlButtons = updateControlButtons;
 window.highlightSelectedText = highlightSelectedText;
 window.addNoteFromSelection = addNoteFromSelection;
