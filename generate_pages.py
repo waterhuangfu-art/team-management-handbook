@@ -176,7 +176,6 @@ def generate_html_template(day_number, title, content_html):
             <button class="nav-toggle">☰</button>
             <ul class="nav-links">
                 <li><a href="../index.html">返回首页</a></li>
-                <li><a href="notes.html">我的笔记</a></li>
                 <li><a href="cases.html">案例库</a></li>
             </ul>
         </div>

@@ -1,8 +1,5 @@
 // ==================== 全局配置 ====================
 const STORAGE_KEY = 'management_handbook_progress';
-const NOTES_KEY = 'management_handbook_notes';
-const HIGHLIGHTS_KEY = 'management_handbook_highlights';
-const SETTINGS_KEY = 'management_handbook_settings';
 const STATS_KEY = 'management_handbook_stats';
 const TOTAL_CHAPTERS = 21;
 
@@ -81,109 +78,6 @@ class ProgressManager {
 }
 
 const progressManager = new ProgressManager();
-
-// ==================== 笔记管理 ====================
-class NoteManager {
-    constructor() {
-        this.notes = this.loadNotes();
-    }
-
-    loadNotes() {
-        const data = localStorage.getItem(NOTES_KEY);
-        return data ? JSON.parse(data) : {};
-    }
-
-    saveNotes() {
-        localStorage.setItem(NOTES_KEY, JSON.stringify(this.notes));
-    }
-
-    addNote(chapterId, content, selection = '') {
-        if (!this.notes[chapterId]) {
-            this.notes[chapterId] = [];
-        }
-        this.notes[chapterId].push({
-            id: Date.now(),
-            content: content,
-            selection: selection,
-            timestamp: new Date().toISOString()
-        });
-        this.saveNotes();
-    }
-
-    deleteNote(chapterId, noteId) {
-        if (this.notes[chapterId]) {
-            this.notes[chapterId] = this.notes[chapterId].filter(n => n.id !== noteId);
-            this.saveNotes();
-        }
-    }
-
-    getNotes(chapterId) {
-        return this.notes[chapterId] || [];
-    }
-
-    getAllNotes() {
-        return this.notes;
-    }
-
-    getTotalNotesCount() {
-        return Object.values(this.notes).reduce((sum, notes) => sum + notes.length, 0);
-    }
-}
-
-const noteManager = new NoteManager();
-
-// ==================== 高亮管理 ====================
-class HighlightManager {
-    constructor() {
-        this.highlights = this.loadHighlights();
-    }
-
-    loadHighlights() {
-        const data = localStorage.getItem(HIGHLIGHTS_KEY);
-        return data ? JSON.parse(data) : {};
-    }
-
-    saveHighlights() {
-        localStorage.setItem(HIGHLIGHTS_KEY, JSON.stringify(this.highlights));
-    }
-
-    addHighlight(chapterId, text, color = '#FFEB3B') {
-        if (!this.highlights[chapterId]) {
-            this.highlights[chapterId] = [];
-        }
-        this.highlights[chapterId].push({
-            id: Date.now(),
-            text: text,
-            color: color,
-            timestamp: new Date().toISOString()
-        });
-        this.saveHighlights();
-    }
-
-    removeHighlight(chapterId, highlightId) {
-        if (this.highlights[chapterId]) {
-            this.highlights[chapterId] = this.highlights[chapterId].filter(h => h.id !== highlightId);
-            this.saveHighlights();
-        }
-    }
-
-    getHighlights(chapterId) {
-        return this.highlights[chapterId] || [];
-    }
-
-    getAllHighlights() {
-        return this.highlights;
-    }
-
-    getTotalHighlightsCount() {
-        return Object.values(this.highlights).reduce((sum, highlights) => sum + highlights.length, 0);
-    }
-}
-
-const highlightManager = new HighlightManager();
-
-// ==================== 阅读设置管理 (已禁用) ====================
-// 阅读设置功能已移除
 
 // ==================== 学习统计 ====================
 class StudyStats {
@@ -584,8 +478,6 @@ function renderStudyStats() {
     const streak = studyStats.getStudyStreak();
     const totalDays = studyStats.getTotalStudyDays();
     const completedCount = progressManager.getCompletedCount();
-    const notesCount = noteManager.getTotalNotesCount();
-    const highlightsCount = highlightManager.getTotalHighlightsCount();
 
     statsContainer.innerHTML = `
         <div class="stats-grid">
@@ -600,14 +492,9 @@ function renderStudyStats() {
                 <div class="stat-label">完成讲数</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📝</div>
-                <div class="stat-value">${notesCount}</div>
-                <div class="stat-label">笔记数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">✨</div>
-                <div class="stat-value">${highlightsCount}</div>
-                <div class="stat-label">标注数</div>
+                <div class="stat-icon">📖</div>
+                <div class="stat-value">${totalDays}</div>
+                <div class="stat-label">学习天数</div>
             </div>
         </div>
     `;
@@ -633,12 +520,6 @@ function checkAchievements() {
     if (streak >= 7 && !localStorage.getItem('achievement-week')) {
         showAchievement('🔥 7日达人', '连续学习7天,坚持就是胜利!', 'achievement-week');
     }
-
-    // 笔记达人
-    const notesCount = noteManager.getTotalNotesCount();
-    if (notesCount >= 20 && !localStorage.getItem('achievement-notes')) {
-        showAchievement('📝 笔记达人', '已记录20条笔记,学习很认真!', 'achievement-notes');
-    }
 }
 
 function showAchievement(title, message, achievementKey) {
@@ -659,114 +540,6 @@ function showAchievement(title, message, achievementKey) {
         achievementToast.classList.remove('show');
         setTimeout(() => achievementToast.remove(), 300);
     }, 5000);
-}
-
-// ==================== 文本选择处理 (高亮和笔记) ====================
-let currentSelectedText = ''; // 全局变量保存当前选中的文本
-
-function initTextSelection() {
-    const articleContent = document.querySelector('.article-content');
-    if (!articleContent) return;
-
-    document.addEventListener('mouseup', (e) => {
-        // 延迟执行，确保选中操作完成
-        setTimeout(() => {
-            const selection = window.getSelection();
-            const selectedText = selection.toString().trim();
-
-            // 如果点击的是选择菜单按钮，不要隐藏菜单
-            if (e.target.closest('.selection-menu')) {
-                return;
-            }
-
-            if (selectedText && selectedText.length > 0 && articleContent.contains(selection.anchorNode)) {
-                currentSelectedText = selectedText;
-                showSelectionMenu(e.pageX, e.pageY);
-            } else {
-                hideSelectionMenu();
-                currentSelectedText = '';
-            }
-        }, 10);
-    });
-
-    // 点击其他地方时隐藏菜单
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.selection-menu')) {
-            hideSelectionMenu();
-        }
-    });
-}
-
-function showSelectionMenu(x, y) {
-    hideSelectionMenu();
-
-    const menu = document.createElement('div');
-    menu.className = 'selection-menu';
-    menu.style.left = x + 'px';
-    menu.style.top = (y - 50) + 'px';
-    menu.innerHTML = `
-        <button onclick="event.stopPropagation(); highlightSelectedText()">✨ 高亮</button>
-        <button onclick="event.stopPropagation(); addNoteFromSelection()">📝 笔记</button>
-    `;
-    document.body.appendChild(menu);
-}
-
-function hideSelectionMenu() {
-    const menu = document.querySelector('.selection-menu');
-    if (menu) menu.remove();
-}
-
-function highlightSelectedText() {
-    if (!currentSelectedText) return;
-
-    const currentPath = window.location.pathname;
-    const fileName = currentPath.split('/').pop();
-    const currentChapter = chapters.find(c => c.file === fileName);
-
-    if (currentChapter) {
-        highlightManager.addHighlight(currentChapter.id, currentSelectedText);
-
-        // 清除选中
-        window.getSelection().removeAllRanges();
-
-        // 隐藏菜单
-        hideSelectionMenu();
-
-        // 显示提示
-        alert('✨ 已添加高亮标注！\n\n可以在"我的笔记"中查看所有标注。');
-
-        currentSelectedText = '';
-    }
-}
-
-function addNoteFromSelection() {
-    if (!currentSelectedText) return;
-
-    const note = prompt('📝 请输入笔记内容:', '');
-    if (!note || note.trim() === '') {
-        hideSelectionMenu();
-        currentSelectedText = '';
-        return;
-    }
-
-    const currentPath = window.location.pathname;
-    const fileName = currentPath.split('/').pop();
-    const currentChapter = chapters.find(c => c.file === fileName);
-
-    if (currentChapter) {
-        noteManager.addNote(currentChapter.id, note.trim(), currentSelectedText);
-
-        // 清除选中
-        window.getSelection().removeAllRanges();
-
-        // 隐藏菜单
-        hideSelectionMenu();
-
-        // 显示提示
-        alert('📝 笔记已保存！\n\n可以在"我的笔记"中查看所有笔记。');
-
-        currentSelectedText = '';
-    }
 }
 
 // ==================== 页面加载完成后初始化 ====================
@@ -791,7 +564,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initArticleNavigation();
         initScrollProgress();
         initSidebarTOC();
-        initTextSelection();
 
         // 检查成就
         setTimeout(() => checkAchievements(), 1000);
@@ -808,9 +580,5 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== 导出到全局作用域 ====================
 window.navigateToChapter = navigateToChapter;
 window.progressManager = progressManager;
-window.noteManager = noteManager;
-window.highlightManager = highlightManager;
 window.studyStats = studyStats;
 window.shareManager = shareManager;
-window.highlightSelectedText = highlightSelectedText;
-window.addNoteFromSelection = addNoteFromSelection;
