@@ -662,25 +662,42 @@ function showAchievement(title, message, achievementKey) {
 }
 
 // ==================== 文本选择处理 (高亮和笔记) ====================
+let currentSelectedText = ''; // 全局变量保存当前选中的文本
+
 function initTextSelection() {
     const articleContent = document.querySelector('.article-content');
     if (!articleContent) return;
 
-    let selectedText = '';
-
     document.addEventListener('mouseup', (e) => {
-        const selection = window.getSelection();
-        selectedText = selection.toString().trim();
+        // 延迟执行，确保选中操作完成
+        setTimeout(() => {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
 
-        if (selectedText && articleContent.contains(selection.anchorNode)) {
-            showSelectionMenu(e.pageX, e.pageY, selectedText);
-        } else {
+            // 如果点击的是选择菜单按钮，不要隐藏菜单
+            if (e.target.closest('.selection-menu')) {
+                return;
+            }
+
+            if (selectedText && selectedText.length > 0 && articleContent.contains(selection.anchorNode)) {
+                currentSelectedText = selectedText;
+                showSelectionMenu(e.pageX, e.pageY);
+            } else {
+                hideSelectionMenu();
+                currentSelectedText = '';
+            }
+        }, 10);
+    });
+
+    // 点击其他地方时隐藏菜单
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.selection-menu')) {
             hideSelectionMenu();
         }
     });
 }
 
-function showSelectionMenu(x, y, text) {
+function showSelectionMenu(x, y) {
     hideSelectionMenu();
 
     const menu = document.createElement('div');
@@ -688,8 +705,8 @@ function showSelectionMenu(x, y, text) {
     menu.style.left = x + 'px';
     menu.style.top = (y - 50) + 'px';
     menu.innerHTML = `
-        <button onclick="highlightSelectedText('${escapeHtml(text)}')">✨ 高亮</button>
-        <button onclick="addNoteFromSelection('${escapeHtml(text)}')">📝 笔记</button>
+        <button onclick="event.stopPropagation(); highlightSelectedText()">✨ 高亮</button>
+        <button onclick="event.stopPropagation(); addNoteFromSelection()">📝 笔记</button>
     `;
     document.body.appendChild(menu);
 }
@@ -699,37 +716,57 @@ function hideSelectionMenu() {
     if (menu) menu.remove();
 }
 
-function escapeHtml(text) {
-    return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-
-function highlightSelectedText(text) {
-    const currentPath = window.location.pathname;
-    const fileName = currentPath.split('/').pop();
-    const currentChapter = chapters.find(c => c.file === fileName);
-
-    if (currentChapter) {
-        highlightManager.addHighlight(currentChapter.id, text);
-        alert('已添加高亮标注');
-    }
-
-    hideSelectionMenu();
-}
-
-function addNoteFromSelection(text) {
-    const note = prompt('请输入笔记内容:', '');
-    if (!note) return;
+function highlightSelectedText() {
+    if (!currentSelectedText) return;
 
     const currentPath = window.location.pathname;
     const fileName = currentPath.split('/').pop();
     const currentChapter = chapters.find(c => c.file === fileName);
 
     if (currentChapter) {
-        noteManager.addNote(currentChapter.id, note, text);
-        alert('笔记已保存');
+        highlightManager.addHighlight(currentChapter.id, currentSelectedText);
+
+        // 清除选中
+        window.getSelection().removeAllRanges();
+
+        // 隐藏菜单
+        hideSelectionMenu();
+
+        // 显示提示
+        alert('✨ 已添加高亮标注！\n\n可以在"我的笔记"中查看所有标注。');
+
+        currentSelectedText = '';
+    }
+}
+
+function addNoteFromSelection() {
+    if (!currentSelectedText) return;
+
+    const note = prompt('📝 请输入笔记内容:', '');
+    if (!note || note.trim() === '') {
+        hideSelectionMenu();
+        currentSelectedText = '';
+        return;
     }
 
-    hideSelectionMenu();
+    const currentPath = window.location.pathname;
+    const fileName = currentPath.split('/').pop();
+    const currentChapter = chapters.find(c => c.file === fileName);
+
+    if (currentChapter) {
+        noteManager.addNote(currentChapter.id, note.trim(), currentSelectedText);
+
+        // 清除选中
+        window.getSelection().removeAllRanges();
+
+        // 隐藏菜单
+        hideSelectionMenu();
+
+        // 显示提示
+        alert('📝 笔记已保存！\n\n可以在"我的笔记"中查看所有笔记。');
+
+        currentSelectedText = '';
+    }
 }
 
 // ==================== 页面加载完成后初始化 ====================
