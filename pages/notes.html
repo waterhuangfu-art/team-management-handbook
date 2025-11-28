@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="我的笔记本 - 查看学习笔记和高亮标注">
+    <title>我的笔记本 - 创始人带团队21讲</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">创始人带团队21讲</a>
+            <button class="nav-toggle">☰</button>
+            <ul class="nav-links">
+                <li><a href="../index.html">返回首页</a></li>
+                <li><a href="cases.html">案例库</a></li>
+                <li><a href="author.html">作者介绍</a></li>
+                <li><a href="quiz.html">测试模块</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 笔记本内容 -->
+    <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; padding: 2rem 0;">
+            <div class="quiz-header" style="text-align: center; margin-bottom: 3rem;">
+                <h1>📒 我的笔记本</h1>
+                <p style="color: var(--text-secondary); font-size: 1rem; margin-top: 1rem;">
+                    所有学习笔记和高亮标注都保存在这里
+                </p>
+            </div>
+
+            <!-- 统计信息 -->
+            <div id="notesStats" style="margin-bottom: 2rem;">
+                <!-- 由JS渲染 -->
+            </div>
+
+            <!-- 筛选选项 -->
+            <div style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                <label style="font-weight: 600; color: var(--text-primary);">筛选:</label>
+                <button class="control-btn active" onclick="filterNotes('all')">全部</button>
+                <button class="control-btn" onclick="filterNotes('notes')">仅笔记</button>
+                <button class="control-btn" onclick="filterNotes('highlights')">仅高亮</button>
+            </div>
+
+            <!-- 笔记列表 -->
+            <div id="notesList">
+                <!-- 由JS动态渲染 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div id="emptyState" style="display: none; text-align: center; padding: 4rem 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;">📭</div>
+                <h3 style="color: var(--text-secondary); font-size: 1.25rem; margin-bottom: 0.5rem;">还没有笔记</h3>
+                <p style="color: var(--text-secondary);">
+                    在阅读章节时,选中文字可以添加笔记和高亮标注
+                </p>
+                <a href="../index.html" class="btn" style="margin-top: 1.5rem; display: inline-block; text-decoration: none;">
+                    开始学习
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer style="background: var(--text-primary); color: white; text-align: center; padding: 2rem 1rem; margin-top: 4rem;">
+        <p style="margin-bottom: 0.5rem;">创始人带团队21讲 - 小团队管理实战手册</p>
+        <p style="opacity: 0.7; font-size: 0.9rem;">作者:黄赋 · 公众号:黄赋</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 渲染笔记统计
+        function renderNotesStats() {
+            const notesCount = noteManager.getTotalNotesCount();
+            const highlightsCount = highlightManager.getTotalHighlightsCount();
+            const total = notesCount + highlightsCount;
+
+            const statsHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value">${notesCount}</div>
+                        <div class="stat-label">笔记数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✨</div>
+                        <div class="stat-value">${highlightsCount}</div>
+                        <div class="stat-label">高亮数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value">${total}</div>
+                        <div class="stat-label">总计</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('notesStats').innerHTML = statsHTML;
+        }
+
+        // 渲染笔记列表
+        function renderNotesList(filter = 'all') {
+            const notesList = document.getElementById('notesList');
+            const emptyState = document.getElementById('emptyState');
+            const allNotes = noteManager.getAllNotes();
+            const allHighlights = highlightManager.getHighlights ? highlightManager.getHighlights() : {};
+
+            let items = [];
+
+            // 收集笔记
+            if (filter === 'all' || filter === 'notes') {
+                Object.keys(allNotes).forEach(chapterId => {
+                    const chapter = chapters.find(c => c.id === parseInt(chapterId));
+                    if (!chapter) return;
+
+                    allNotes[chapterId].forEach(note => {
+                        items.push({
+                            type: 'note',
+                            chapterId: chapterId,
+                            chapterTitle: chapter.title,
+                            ...note
+                        });
+                    });
+                });
+            }
+
+            // 收集高亮
+            if (filter === 'all' || filter === 'highlights') {
+                const highlights = highlightManager.getAllHighlights ? highlightManager.getAllHighlights() : allHighlights;
+                Object.keys(highlights || {}).forEach(chapterId => {
+                    const chapter = chapters.find(c => c.id === parseInt(chapterId));
+                    if (!chapter) return;
+
+                    (highlights[chapterId] || []).forEach(highlight => {
+                        items.push({
+                            type: 'highlight',
+                            chapterId: chapterId,
+                            chapterTitle: chapter.title,
+                            ...highlight
+                        });
+                    });
+                });
+            }
+
+            // 按时间倒序排列
+            items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if (items.length === 0) {
+                notesList.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            notesList.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            notesList.innerHTML = items.map(item => {
+                const date = new Date(item.timestamp).toLocaleString('zh-CN');
+                const icon = item.type === 'note' ? '📝' : '✨';
+                const typeLabel = item.type === 'note' ? '笔记' : '高亮';
+
+                return `
+                    <div class="question-card" style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div>
+                                <span style="background: var(--primary-color); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.875rem;">
+                                    ${icon} ${typeLabel}
+                                </span>
+                                <a href="${chapters.find(c => c.id === parseInt(item.chapterId)).file}"
+                                   style="margin-left: 0.75rem; color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                                    Day ${item.chapterId}: ${item.chapterTitle}
+                                </a>
+                            </div>
+                            <button class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;"
+                                    onclick="deleteItem('${item.type}', ${item.chapterId}, ${item.id})">
+                                删除
+                            </button>
+                        </div>
+
+                        ${item.selection ? `
+                            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; border-left: 3px solid #FFEB3B;">
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">原文:</p>
+                                <p style="color: var(--text-primary); margin-top: 0.5rem;">${item.selection || item.text}</p>
+                            </div>
+                        ` : `
+                            <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                                <p style="color: var(--text-primary);">${item.text || item.content}</p>
+                            </div>
+                        `}
+
+                        ${item.content ? `
+                            <div style="padding: 1rem; background: var(--bg-color); border-radius: var(--radius-sm); border-left: 3px solid var(--primary-color);">
+                                <strong style="color: var(--text-primary);">我的笔记:</strong>
+                                <p style="color: var(--text-secondary); margin-top: 0.5rem;">${item.content}</p>
+                            </div>
+                        ` : ''}
+
+                        <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-secondary);">
+                            ${date}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 删除笔记或高亮
+        function deleteItem(type, chapterId, itemId) {
+            if (!confirm('确定要删除这条记录吗?')) return;
+
+            if (type === 'note') {
+                noteManager.deleteNote(chapterId, itemId);
+            } else {
+                highlightManager.removeHighlight(chapterId, itemId);
+            }
+
+            renderNotesList();
+            renderNotesStats();
+        }
+
+        // 筛选笔记
+        function filterNotes(filter) {
+            // 更新按钮状态
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderNotesList(filter);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotesStats();
+            renderNotesList();
+        });
+    </script>
+</body>
+</html>

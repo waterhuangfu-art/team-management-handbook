@@ -15,7 +15,8 @@
             <button class="nav-toggle">☰</button>
             <ul class="nav-links">
                 <li><a href="../index.html">返回首页</a></li>
-                <li><a href="#content">章节内容</a></li>
+                <li><a href="notes.html">我的笔记</a></li>
+                <li><a href="cases.html">案例库</a></li>
             </ul>
         </div>
     </nav>
@@ -24,10 +25,12 @@
     <div class="article-layout">
         <!-- 侧边栏目录 -->
         <aside class="sidebar">
-            <h3 class="sidebar-title">章节目录</h3>
-            <ul class="toc-list">
-                <!-- 目录将通过JavaScript动态生成 -->
-            </ul>
+            <div class="toc-wrapper">
+                <h3 class="sidebar-title">章节目录</h3>
+                <ul class="toc-list">
+                    <!-- 目录将通过JavaScript动态生成 -->
+                </ul>
+            </div>
         </aside>
 
         <!-- 文章内容 -->
@@ -35,6 +38,15 @@
             <header class="article-header">
                 <div class="article-number">Day 20 / 21</div>
                 <h1 class="article-title">下属不在眼前,怎么督导?</h1>
+
+                <!-- 分享按钮 -->
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem;"
+                            onclick="shareManager.generateShareCard(20, '下属不在眼前,怎么督导?')">
+                        📤 分享此讲
+                    </button>
+                    <span style="color: var(--text-secondary); font-size: 0.875rem;">长按卡片保存分享</span>
+                </div>
             </header>
 
             <div class="article-body">
@@ -125,6 +137,8 @@
 
 <p>关键不是工具，是<strong>让进度随时可见</strong>。</p>
             </div>
+
+
 
             <!-- 导航按钮将通过JavaScript动态生成 -->
         </article>

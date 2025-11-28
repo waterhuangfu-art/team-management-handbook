@@ -1,5 +1,9 @@
 // ==================== 全局配置 ====================
 const STORAGE_KEY = 'management_handbook_progress';
+const NOTES_KEY = 'management_handbook_notes';
+const HIGHLIGHTS_KEY = 'management_handbook_highlights';
+const SETTINGS_KEY = 'management_handbook_settings';
+const STATS_KEY = 'management_handbook_stats';
 const TOTAL_CHAPTERS = 21;
 
 // ==================== 数据结构 ====================
@@ -77,6 +81,275 @@ class ProgressManager {
 }
 
 const progressManager = new ProgressManager();
+
+// ==================== 笔记管理 ====================
+class NoteManager {
+    constructor() {
+        this.notes = this.loadNotes();
+    }
+
+    loadNotes() {
+        const data = localStorage.getItem(NOTES_KEY);
+        return data ? JSON.parse(data) : {};
+    }
+
+    saveNotes() {
+        localStorage.setItem(NOTES_KEY, JSON.stringify(this.notes));
+    }
+
+    addNote(chapterId, content, selection = '') {
+        if (!this.notes[chapterId]) {
+            this.notes[chapterId] = [];
+        }
+        this.notes[chapterId].push({
+            id: Date.now(),
+            content: content,
+            selection: selection,
+            timestamp: new Date().toISOString()
+        });
+        this.saveNotes();
+    }
+
+    deleteNote(chapterId, noteId) {
+        if (this.notes[chapterId]) {
+            this.notes[chapterId] = this.notes[chapterId].filter(n => n.id !== noteId);
+            this.saveNotes();
+        }
+    }
+
+    getNotes(chapterId) {
+        return this.notes[chapterId] || [];
+    }
+
+    getAllNotes() {
+        return this.notes;
+    }
+
+    getTotalNotesCount() {
+        return Object.values(this.notes).reduce((sum, notes) => sum + notes.length, 0);
+    }
+}
+
+const noteManager = new NoteManager();
+
+// ==================== 高亮管理 ====================
+class HighlightManager {
+    constructor() {
+        this.highlights = this.loadHighlights();
+    }
+
+    loadHighlights() {
+        const data = localStorage.getItem(HIGHLIGHTS_KEY);
+        return data ? JSON.parse(data) : {};
+    }
+
+    saveHighlights() {
+        localStorage.setItem(HIGHLIGHTS_KEY, JSON.stringify(this.highlights));
+    }
+
+    addHighlight(chapterId, text, color = '#FFEB3B') {
+        if (!this.highlights[chapterId]) {
+            this.highlights[chapterId] = [];
+        }
+        this.highlights[chapterId].push({
+            id: Date.now(),
+            text: text,
+            color: color,
+            timestamp: new Date().toISOString()
+        });
+        this.saveHighlights();
+    }
+
+    removeHighlight(chapterId, highlightId) {
+        if (this.highlights[chapterId]) {
+            this.highlights[chapterId] = this.highlights[chapterId].filter(h => h.id !== highlightId);
+            this.saveHighlights();
+        }
+    }
+
+    getHighlights(chapterId) {
+        return this.highlights[chapterId] || [];
+    }
+
+    getTotalHighlightsCount() {
+        return Object.values(this.highlights).reduce((sum, highlights) => sum + highlights.length, 0);
+    }
+}
+
+const highlightManager = new HighlightManager();
+
+// ==================== 阅读设置管理 ====================
+class ReadingSettings {
+    constructor() {
+        this.settings = this.loadSettings();
+        this.applySettings();
+    }
+
+    loadSettings() {
+        const data = localStorage.getItem(SETTINGS_KEY);
+        return data ? JSON.parse(data) : {
+            theme: 'light', // light, dark
+            fontSize: 'medium', // small, medium, large
+            fontFamily: 'system' // system, serif, sans-serif
+        };
+    }
+
+    saveSettings() {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings));
+    }
+
+    setTheme(theme) {
+        this.settings.theme = theme;
+        this.saveSettings();
+        this.applySettings();
+    }
+
+    setFontSize(size) {
+        this.settings.fontSize = size;
+        this.saveSettings();
+        this.applySettings();
+    }
+
+    setFontFamily(family) {
+        this.settings.fontFamily = family;
+        this.saveSettings();
+        this.applySettings();
+    }
+
+    applySettings() {
+        const root = document.documentElement;
+
+        // 主题
+        if (this.settings.theme === 'dark') {
+            root.setAttribute('data-theme', 'dark');
+        } else {
+            root.removeAttribute('data-theme');
+        }
+
+        // 字号
+        const fontSizes = {
+            small: '15px',
+            medium: '17px',
+            large: '19px'
+        };
+        root.style.setProperty('--base-font-size', fontSizes[this.settings.fontSize] || '17px');
+
+        // 字体
+        const fontFamilies = {
+            system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            serif: 'Georgia, "Times New Roman", serif',
+            sans: '"Helvetica Neue", Helvetica, Arial, sans-serif'
+        };
+        root.style.setProperty('--reading-font', fontFamilies[this.settings.fontFamily] || fontFamilies.system);
+    }
+
+    getSettings() {
+        return this.settings;
+    }
+}
+
+const readingSettings = new ReadingSettings();
+
+// ==================== 学习统计 ====================
+class StudyStats {
+    constructor() {
+        this.stats = this.loadStats();
+    }
+
+    loadStats() {
+        const data = localStorage.getItem(STATS_KEY);
+        return data ? JSON.parse(data) : {
+            studyDays: [],
+            totalMinutes: 0,
+            lastStudyDate: null
+        };
+    }
+
+    saveStats() {
+        localStorage.setItem(STATS_KEY, JSON.stringify(this.stats));
+    }
+
+    recordStudySession(minutes = 5) {
+        const today = new Date().toISOString().split('T')[0];
+
+        if (!this.stats.studyDays.includes(today)) {
+            this.stats.studyDays.push(today);
+        }
+
+        this.stats.totalMinutes += minutes;
+        this.stats.lastStudyDate = new Date().toISOString();
+        this.saveStats();
+    }
+
+    getStudyStreak() {
+        if (this.stats.studyDays.length === 0) return 0;
+
+        const sortedDays = this.stats.studyDays.sort().reverse();
+        const today = new Date();
+        let streak = 0;
+
+        for (let i = 0; i < sortedDays.length; i++) {
+            const studyDate = new Date(sortedDays[i]);
+            const diffDays = Math.floor((today - studyDate) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === i) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    getTotalStudyDays() {
+        return this.stats.studyDays.length;
+    }
+
+    getTotalMinutes() {
+        return this.stats.totalMinutes;
+    }
+}
+
+const studyStats = new StudyStats();
+
+// ==================== 分享管理 ====================
+class ShareManager {
+    generateShareCard(chapterId, chapterTitle) {
+        const shareModal = document.createElement('div');
+        shareModal.className = 'share-modal';
+        shareModal.innerHTML = `
+            <div class="share-modal-content">
+                <button class="share-close" onclick="this.closest('.share-modal').remove()">✕</button>
+                <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">分享此讲</h3>
+
+                <div class="share-card-preview">
+                    <img src="../images/Day${String(chapterId).padStart(2, '0')}${chapterTitle.split(/[,，]/)[0]}.png"
+                         alt="分享卡片"
+                         style="width: 100%; max-width: 400px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);"
+                         onerror="this.src='../images/海报.png'">
+                </div>
+
+                <p style="margin: 1.5rem 0; color: var(--text-secondary); font-size: 0.95rem;">
+                    长按图片保存并分享给朋友<br>
+                    也可以直接复制链接分享
+                </p>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <button class="btn btn-secondary" onclick="navigator.clipboard.writeText(window.location.href).then(() => alert('链接已复制!'))">
+                        复制链接
+                    </button>
+                    <button class="btn" onclick="this.closest('.share-modal').remove()">
+                        知道了
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(shareModal);
+    }
+}
+
+const shareManager = new ShareManager();
 
 // ==================== 导航菜单切换 ====================
 function initMobileMenu() {
@@ -317,8 +590,291 @@ function initSmoothScroll() {
     });
 }
 
+// ==================== 回到顶部按钮 ====================
+function initBackToTop() {
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.className = 'back-to-top';
+    backToTopBtn.innerHTML = '↑';
+    backToTopBtn.setAttribute('aria-label', '回到顶部');
+    document.body.appendChild(backToTopBtn);
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+// ==================== 侧边栏目录 (可折叠) ====================
+function initSidebarTOC() {
+    const articleContent = document.querySelector('.article-content');
+    if (!articleContent) return;
+
+    const sidebar = document.createElement('div');
+    sidebar.className = 'sidebar-toc';
+    sidebar.innerHTML = `
+        <div class="sidebar-toc-header">
+            <h4>目录</h4>
+            <button class="sidebar-toggle" onclick="this.closest('.sidebar-toc').classList.toggle('collapsed')">
+                <span class="toggle-icon">−</span>
+            </button>
+        </div>
+        <div class="toc-list"></div>
+    `;
+
+    const tocWrapper = document.querySelector('.toc-wrapper');
+    if (tocWrapper) {
+        tocWrapper.appendChild(sidebar);
+        renderTOC();
+    }
+}
+
+// ==================== 阅读设置控件 ====================
+function initReadingControls() {
+    const controls = document.createElement('div');
+    controls.className = 'reading-controls';
+    controls.innerHTML = `
+        <button class="control-toggle" aria-label="阅读设置" onclick="this.nextElementSibling.classList.toggle('active')">
+            ⚙️
+        </button>
+        <div class="controls-panel">
+            <h4 style="margin-bottom: 1rem; font-size: 0.95rem;">阅读设置</h4>
+
+            <div class="control-group">
+                <label>主题</label>
+                <div class="control-buttons">
+                    <button class="control-btn ${readingSettings.getSettings().theme === 'light' ? 'active' : ''}"
+                            onclick="readingSettings.setTheme('light'); updateControlButtons()">
+                        ☀️ 白天
+                    </button>
+                    <button class="control-btn ${readingSettings.getSettings().theme === 'dark' ? 'active' : ''}"
+                            onclick="readingSettings.setTheme('dark'); updateControlButtons()">
+                        🌙 夜间
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>字号</label>
+                <div class="control-buttons">
+                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'small' ? 'active' : ''}"
+                            onclick="readingSettings.setFontSize('small'); updateControlButtons()">
+                        小
+                    </button>
+                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'medium' ? 'active' : ''}"
+                            onclick="readingSettings.setFontSize('medium'); updateControlButtons()">
+                        中
+                    </button>
+                    <button class="control-btn ${readingSettings.getSettings().fontSize === 'large' ? 'active' : ''}"
+                            onclick="readingSettings.setFontSize('large'); updateControlButtons()">
+                        大
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>字体</label>
+                <div class="control-buttons">
+                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'system' ? 'active' : ''}"
+                            onclick="readingSettings.setFontFamily('system'); updateControlButtons()">
+                        默认
+                    </button>
+                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'serif' ? 'active' : ''}"
+                            onclick="readingSettings.setFontFamily('serif'); updateControlButtons()">
+                        衬线
+                    </button>
+                    <button class="control-btn ${readingSettings.getSettings().fontFamily === 'sans' ? 'active' : ''}"
+                            onclick="readingSettings.setFontFamily('sans'); updateControlButtons()">
+                        无衬线
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(controls);
+}
+
+function updateControlButtons() {
+    const settings = readingSettings.getSettings();
+    document.querySelectorAll('.controls-panel .control-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 重新应用active类
+    initReadingControls();
+}
+
+// ==================== 学习统计可视化 ====================
+function renderStudyStats() {
+    const statsContainer = document.getElementById('studyStats');
+    if (!statsContainer) return;
+
+    const streak = studyStats.getStudyStreak();
+    const totalDays = studyStats.getTotalStudyDays();
+    const completedCount = progressManager.getCompletedCount();
+    const notesCount = noteManager.getTotalNotesCount();
+    const highlightsCount = highlightManager.getTotalHighlightsCount();
+
+    statsContainer.innerHTML = `
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value">${streak}</div>
+                <div class="stat-label">连续学习天数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value">${completedCount}/${TOTAL_CHAPTERS}</div>
+                <div class="stat-label">完成讲数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-value">${notesCount}</div>
+                <div class="stat-label">笔记数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✨</div>
+                <div class="stat-value">${highlightsCount}</div>
+                <div class="stat-label">标注数</div>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== 成就系统 ====================
+function checkAchievements() {
+    const completedCount = progressManager.getCompletedCount();
+    const achievements = [];
+
+    // 完成所有章节
+    if (completedCount === TOTAL_CHAPTERS) {
+        showAchievement('🏆 学习大师', '恭喜完成全部21讲!', 'achievement-master');
+    }
+
+    // 完成一半
+    if (completedCount === Math.floor(TOTAL_CHAPTERS / 2) && !localStorage.getItem('achievement-half')) {
+        showAchievement('⭐ 半程英雄', '已完成一半课程,继续加油!', 'achievement-half');
+    }
+
+    // 连续学习7天
+    const streak = studyStats.getStudyStreak();
+    if (streak >= 7 && !localStorage.getItem('achievement-week')) {
+        showAchievement('🔥 7日达人', '连续学习7天,坚持就是胜利!', 'achievement-week');
+    }
+
+    // 笔记达人
+    const notesCount = noteManager.getTotalNotesCount();
+    if (notesCount >= 20 && !localStorage.getItem('achievement-notes')) {
+        showAchievement('📝 笔记达人', '已记录20条笔记,学习很认真!', 'achievement-notes');
+    }
+}
+
+function showAchievement(title, message, achievementKey) {
+    localStorage.setItem(achievementKey, 'true');
+
+    const achievementToast = document.createElement('div');
+    achievementToast.className = 'achievement-toast';
+    achievementToast.innerHTML = `
+        <div class="achievement-content">
+            <h4>${title}</h4>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(achievementToast);
+
+    setTimeout(() => achievementToast.classList.add('show'), 100);
+    setTimeout(() => {
+        achievementToast.classList.remove('show');
+        setTimeout(() => achievementToast.remove(), 300);
+    }, 5000);
+}
+
+// ==================== 文本选择处理 (高亮和笔记) ====================
+function initTextSelection() {
+    const articleContent = document.querySelector('.article-content');
+    if (!articleContent) return;
+
+    let selectedText = '';
+
+    document.addEventListener('mouseup', (e) => {
+        const selection = window.getSelection();
+        selectedText = selection.toString().trim();
+
+        if (selectedText && articleContent.contains(selection.anchorNode)) {
+            showSelectionMenu(e.pageX, e.pageY, selectedText);
+        } else {
+            hideSelectionMenu();
+        }
+    });
+}
+
+function showSelectionMenu(x, y, text) {
+    hideSelectionMenu();
+
+    const menu = document.createElement('div');
+    menu.className = 'selection-menu';
+    menu.style.left = x + 'px';
+    menu.style.top = (y - 50) + 'px';
+    menu.innerHTML = `
+        <button onclick="highlightSelectedText('${escapeHtml(text)}')">✨ 高亮</button>
+        <button onclick="addNoteFromSelection('${escapeHtml(text)}')">📝 笔记</button>
+    `;
+    document.body.appendChild(menu);
+}
+
+function hideSelectionMenu() {
+    const menu = document.querySelector('.selection-menu');
+    if (menu) menu.remove();
+}
+
+function escapeHtml(text) {
+    return text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function highlightSelectedText(text) {
+    const currentPath = window.location.pathname;
+    const fileName = currentPath.split('/').pop();
+    const currentChapter = chapters.find(c => c.file === fileName);
+
+    if (currentChapter) {
+        highlightManager.addHighlight(currentChapter.id, text);
+        alert('已添加高亮标注');
+    }
+
+    hideSelectionMenu();
+}
+
+function addNoteFromSelection(text) {
+    const note = prompt('请输入笔记内容:', '');
+    if (!note) return;
+
+    const currentPath = window.location.pathname;
+    const fileName = currentPath.split('/').pop();
+    const currentChapter = chapters.find(c => c.file === fileName);
+
+    if (currentChapter) {
+        noteManager.addNote(currentChapter.id, note, text);
+        alert('笔记已保存');
+    }
+
+    hideSelectionMenu();
+}
+
 // ==================== 页面加载完成后初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
+    // 记录学习session
+    studyStats.recordStudySession();
+
     // 初始化移动端菜单
     initMobileMenu();
 
@@ -327,6 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderChapterCards();
         updateProgressDisplay();
         initSearch();
+        renderStudyStats();
     }
 
     // 文章页面功能
@@ -334,10 +891,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTOC();
         initArticleNavigation();
         initScrollProgress();
+        initSidebarTOC();
+        initTextSelection();
+        initReadingControls();
+
+        // 检查成就
+        setTimeout(() => checkAchievements(), 1000);
     }
 
     // 全局功能
     initSmoothScroll();
+    initBackToTop();
 
     // 添加淡入动画
     document.body.classList.add('fade-in');
@@ -346,3 +910,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==================== 导出到全局作用域 ====================
 window.navigateToChapter = navigateToChapter;
 window.progressManager = progressManager;
+window.noteManager = noteManager;
+window.highlightManager = highlightManager;
+window.readingSettings = readingSettings;
+window.studyStats = studyStats;
+window.shareManager = shareManager;
+window.updateControlButtons = updateControlButtons;
+window.highlightSelectedText = highlightSelectedText;
+window.addNoteFromSelection = addNoteFromSelection;

@@ -125,6 +125,40 @@ def markdown_to_html(content):
 
 def generate_html_template(day_number, title, content_html):
     """生成HTML页面"""
+    # 判断是否需要添加CTA引导（每隔3-5讲）
+    show_cta = day_number in [3, 6, 9, 12, 15, 18, 21]
+
+    cta_html = ''
+    if show_cta:
+        cta_html = '''
+            <!-- CTA引导 - 关注公众号 -->
+            <div style="background: linear-gradient(135deg, #fff 0%, var(--bg-secondary) 100%); padding: 2rem; border-radius: var(--radius-lg); border: 2px solid var(--primary-color); margin: 3rem 0; box-shadow: var(--shadow-md);">
+                <h3 style="text-align: center; font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); font-weight: 700;">
+                    🎁 关注公众号,领取21天卡片版
+                </h3>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                    关注【公众号:黄赋】回复"<strong style="color: var(--primary-color);">21天</strong>"<br>
+                    即可获得21天管理卡片版,方便每天打卡学习
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; justify-items: center;">
+                    <div style="text-align: center;">
+                        <div style="background: white; padding: 0.75rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                            <img src="../images/公众号二维码.jpg" alt="公众号二维码" style="width: 150px; height: 150px; display: block; border-radius: var(--radius-sm);">
+                        </div>
+                        <p style="margin-top: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">公众号二维码</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <div style="background: white; padding: 0.75rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                            <img src="../images/黄赋的二维码.png" alt="黄赋微信" style="width: 150px; height: 150px; display: block; border-radius: var(--radius-sm);">
+                        </div>
+                        <p style="margin-top: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 0.95rem;">交个朋友</p>
+                    </div>
+                </div>
+            </div>
+        '''
+
     return f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -142,7 +176,8 @@ def generate_html_template(day_number, title, content_html):
             <button class="nav-toggle">☰</button>
             <ul class="nav-links">
                 <li><a href="../index.html">返回首页</a></li>
-                <li><a href="#content">章节内容</a></li>
+                <li><a href="notes.html">我的笔记</a></li>
+                <li><a href="cases.html">案例库</a></li>
             </ul>
         </div>
     </nav>
@@ -151,10 +186,12 @@ def generate_html_template(day_number, title, content_html):
     <div class="article-layout">
         <!-- 侧边栏目录 -->
         <aside class="sidebar">
-            <h3 class="sidebar-title">章节目录</h3>
-            <ul class="toc-list">
-                <!-- 目录将通过JavaScript动态生成 -->
-            </ul>
+            <div class="toc-wrapper">
+                <h3 class="sidebar-title">章节目录</h3>
+                <ul class="toc-list">
+                    <!-- 目录将通过JavaScript动态生成 -->
+                </ul>
+            </div>
         </aside>
 
         <!-- 文章内容 -->
@@ -162,11 +199,22 @@ def generate_html_template(day_number, title, content_html):
             <header class="article-header">
                 <div class="article-number">Day {day_number} / 21</div>
                 <h1 class="article-title">{title}</h1>
+
+                <!-- 分享按钮 -->
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem;"
+                            onclick="shareManager.generateShareCard({day_number}, '{title}')">
+                        📤 分享此讲
+                    </button>
+                    <span style="color: var(--text-secondary); font-size: 0.875rem;">长按卡片保存分享</span>
+                </div>
             </header>
 
             <div class="article-body">
 {content_html}
             </div>
+
+{cta_html}
 
             <!-- 导航按钮将通过JavaScript动态生成 -->
         </article>

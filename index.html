@@ -55,6 +55,11 @@
             </div>
         </section>
 
+        <!-- 学习统计 -->
+        <section id="studyStats" style="max-width: 1000px; margin: 0 auto 3rem;">
+            <!-- 统计卡片将通过JavaScript动态生成 -->
+        </section>
+
         <!-- 导读部分 -->
         <section id="intro" style="max-width: 800px; margin: 0 auto 3rem; background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
             <h2 style="font-size: 2rem; margin-bottom: 1rem; color: var(--text-primary);">📖 导读</h2>
@@ -152,11 +157,29 @@
         </section>
 
         <!-- 快速入口 -->
-        <section style="max-width: 800px; margin: 3rem auto;">
+        <section style="max-width: 1000px; margin: 3rem auto;">
             <h2 style="text-align: center; font-size: 1.75rem; margin-bottom: 2rem; color: var(--text-primary);">
                 📌 更多内容
             </h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                <a href="pages/notes.html" style="text-decoration: none;">
+                    <div style="background: var(--bg-color); padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: var(--transition); cursor: pointer;">
+                        <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">📒</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; text-align: center; color: var(--text-primary); margin-bottom: 0.5rem;">我的笔记</h3>
+                        <p style="text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
+                            查看所有笔记<br>和高亮标注
+                        </p>
+                    </div>
+                </a>
+                <a href="pages/cases.html" style="text-decoration: none;">
+                    <div style="background: var(--bg-color); padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: var(--transition); cursor: pointer;">
+                        <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">💼</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; text-align: center; color: var(--text-primary); margin-bottom: 0.5rem;">案例库</h3>
+                        <p style="text-align: center; color: var(--text-secondary); font-size: 0.95rem;">
+                            按场景分类<br>快速查找方法
+                        </p>
+                    </div>
+                </a>
                 <a href="pages/author.html" style="text-decoration: none;">
                     <div style="background: var(--bg-color); padding: 2rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); transition: var(--transition); cursor: pointer;">
                         <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">👤</div>
@@ -175,6 +198,47 @@
                         </p>
                     </div>
                 </a>
+            </div>
+        </section>
+
+        <!-- CTA引导 - 关注公众号 -->
+        <section style="max-width: 900px; margin: 4rem auto; background: linear-gradient(135deg, #fff 0%, var(--bg-secondary) 100%); padding: 2.5rem; border-radius: var(--radius-lg); border: 2px solid var(--primary-color); box-shadow: var(--shadow-lg);">
+            <h2 style="text-align: center; font-size: 1.75rem; margin-bottom: 1.5rem; color: var(--primary-color); font-weight: 700;">
+                🎁 关注公众号,领取21天卡片版
+            </h2>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 2rem; line-height: 1.8;">
+                关注【公众号:黄赋】回复"<strong style="color: var(--primary-color);">21天</strong>"<br>
+                即可获得<strong>21天管理卡片版</strong>,每天一张卡片,便于打卡学习
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; justify-items: center;">
+                <!-- 公众号二维码 -->
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 1rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                        <img src="images/公众号二维码.jpg" alt="公众号二维码" style="width: 200px; height: 200px; display: block; border-radius: var(--radius-sm);">
+                    </div>
+                    <p style="margin-top: 1rem; font-weight: 600; color: var(--text-primary);">扫码关注公众号</p>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">回复"21天"领取卡片</p>
+                </div>
+
+                <!-- 个人微信二维码 -->
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 1rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); display: inline-block;">
+                        <img src="images/黄赋的二维码.png" alt="黄赋微信二维码" style="width: 200px; height: 200px; display: block; border-radius: var(--radius-sm);">
+                    </div>
+                    <p style="margin-top: 1rem; font-weight: 600; color: var(--text-primary);">交个朋友</p>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">微信号: doitnowf</p>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-color); padding: 1.5rem; border-radius: var(--radius-md); margin-top: 2rem; border-left: 4px solid var(--primary-color);">
+                <h4 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.1rem;">📚 卡片版内容包含:</h4>
+                <ul style="color: var(--text-secondary); line-height: 2; padding-left: 1.5rem;">
+                    <li>21天管理场景精华提炼</li>
+                    <li>每日一张卡片,方便打卡学习</li>
+                    <li>高清PDF格式,可打印随身携带</li>
+                    <li>更有配套案例和实战工具</li>
+                </ul>
             </div>
         </section>
     </main>
