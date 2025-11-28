@@ -458,7 +458,7 @@ function showDetailedResults() {
                     </p>
                     ${!userAnswer.isCorrect ? `
                         <p style="color: var(--primary-color); margin-bottom: 0.5rem;">
-                            <strong>正确答案:</strong> ${correctOption.text}
+                            <strong>参考答案:</strong> ${correctOption.text}
                         </p>
                     ` : ''}
                 </div>
